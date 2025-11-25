@@ -1,0 +1,188 @@
+{
+  "@@locale": "en",
+  "appName": "Hope Paw",
+  "@appName": {
+    "description": "The application name"
+  },
+  "chooseLanguage": "Choose Your Language",
+  "@chooseLanguage": {
+    "description": "Title for language selection screen"
+  },
+  "selectLanguage": "Select a language to continue",
+  "@selectLanguage": {
+    "description": "Hint text for language selection"
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button text"
+  },
+  "reportAnimal": "Report Animal",
+  "@reportAnimal": {
+    "description": "Title for report screen"
+  },
+  "uploadImages": "Upload Animal Images (max 4)",
+  "@uploadImages": {
+    "description": "Label for image upload section"
+  },
+  "animalStatus": "Animal Status",
+  "@animalStatus": {
+    "description": "Label for animal status selection"
+  },
+  "lost": "Lost",
+  "@lost": {
+    "description": "Lost status option"
+  },
+  "found": "Found",
+  "@found": {
+    "description": "Found status option"
+  },
+  "animalType": "Animal Type",
+  "@animalType": {
+    "description": "Label for animal type selection"
+  },
+  "selectAnimalType": "Select animal type",
+  "@selectAnimalType": {
+    "description": "Hint for animal type dropdown"
+  },
+  "animalName": "Animal Name (Optional)",
+  "@animalName": {
+    "description": "Label for animal name field"
+  },
+  "enterAnimalName": "Enter animal name if known",
+  "@enterAnimalName": {
+    "description": "Hint for animal name field"
+  },
+  "animalColor": "Animal Color *",
+  "@animalColor": {
+    "description": "Label for animal color field"
+  },
+  "enterColor": "e.g., Brown, Black, White",
+  "@enterColor": {
+    "description": "Hint for animal color field"
+  },
+  "age": "Age (Optional)",
+  "@age": {
+    "description": "Label for age field"
+  },
+  "reward": "Reward (Optional)",
+  "@reward": {
+    "description": "Label for reward field"
+  },
+  "yourInformation": "Your Information *",
+  "@yourInformation": {
+    "description": "Label for user information section"
+  },
+  "yourName": "Your Name",
+  "@yourName": {
+    "description": "Label for user name field"
+  },
+  "yourEmail": "Your Email",
+  "@yourEmail": {
+    "description": "Label for user email field"
+  },
+  "description": "Description *",
+  "@description": {
+    "description": "Label for description field"
+  },
+  "addDescription": "Add any additional details about the animal...",
+  "@addDescription": {
+    "description": "Hint for description field"
+  },
+  "locationAddress": "Location Address *",
+  "@locationAddress": {
+    "description": "Label for location address field"
+  },
+  "enterAddress": "Enter the address where animal was lost/found",
+  "@enterAddress": {
+    "description": "Hint for location address field"
+  },
+  "animalLocation": "Animal Location",
+  "@animalLocation": {
+    "description": "Label for map section"
+  },
+  "locationCoordinates": "Location Coordinates",
+  "@locationCoordinates": {
+    "description": "Label for coordinates section"
+  },
+  "latitude": "Latitude",
+  "@latitude": {
+    "description": "Label for latitude field"
+  },
+  "longitude": "Longitude",
+  "@longitude": {
+    "description": "Label for longitude field"
+  },
+  "useCurrentLocation": "Use Current Location",
+  "@useCurrentLocation": {
+    "description": "Button text for using current location"
+  },
+  "addAnimal": "Add Animal",
+  "@addAnimal": {
+    "description": "Button text for submitting report"
+  },
+  "pleaseUploadImages": "Please upload images",
+  "@pleaseUploadImages": {
+    "description": "Error message for missing images"
+  },
+  "pleaseSelectStatus": "Please select Lost or Found",
+  "@pleaseSelectStatus": {
+    "description": "Error message for missing status"
+  },
+  "pleasePickLocation": "Please pick a location",
+  "@pleasePickLocation": {
+    "description": "Error message for missing location"
+  },
+  "pleaseSelectAnimalType": "Please select animal type",
+  "@pleaseSelectAnimalType": {
+    "description": "Error message for missing animal type"
+  },
+  "pleaseEnterColor": "Please enter animal color",
+  "@pleaseEnterColor": {
+    "description": "Error message for missing color"
+  },
+  "pleaseEnterName": "Please enter your name",
+  "@pleaseEnterName": {
+    "description": "Error message for missing name"
+  },
+  "pleaseEnterEmail": "Please enter your email",
+  "@pleaseEnterEmail": {
+    "description": "Error message for missing email"
+  },
+  "pleaseEnterDescription": "Please enter description",
+  "@pleaseEnterDescription": {
+    "description": "Error message for missing description"
+  },
+  "pleaseEnterAddress": "Please enter location address",
+  "@pleaseEnterAddress": {
+    "description": "Error message for missing address"
+  },
+  "reportAddedSuccessfully": "Report added successfully",
+  "@reportAddedSuccessfully": {
+    "description": "Success message after submitting report"
+  },
+  "failedToSubmitReport": "Failed to submit report",
+  "@failedToSubmitReport": {
+    "description": "Error message when report submission fails"
+  },
+  "locationPermissionRequired": "Location permission is required",
+  "@locationPermissionRequired": {
+    "description": "Error message for missing location permission"
+  },
+  "dog": "Dog",
+  "@dog": {
+    "description": "Dog animal type"
+  },
+  "cat": "Cat",
+  "@cat": {
+    "description": "Cat animal type"
+  },
+  "bird": "Bird",
+  "@bird": {
+    "description": "Bird animal type"
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other animal type"
+  }
+}
+
