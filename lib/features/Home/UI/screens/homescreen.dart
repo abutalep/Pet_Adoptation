@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:hopepaw/features/providers/user_provider.dart';
 import 'package:hopepaw/features/Home/Data/firebase/home_firebase.dart';
 import 'package:hopepaw/features/Home/UI/screens/widgets/filter_button.dart';
 import 'package:hopepaw/features/Home/UI/screens/widgets/profile_card.dart';
@@ -15,12 +18,17 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = "All";
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final displayName =
+        userProvider.userData?['displayName'] ??
+        FirebaseAuth.instance.currentUser?.displayName ??
+        "User";
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ProfileCard(name: "USER"),
+              ProfileCard(name: displayName),
               SizedBox(height: 8),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,

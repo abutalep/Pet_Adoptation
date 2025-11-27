@@ -1,70 +1,72 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hopepaw/features/report/Data/models/post_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hopepaw/features/report/Data/models/report_model.dart';
 
 class ReportService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Collection name in Firestore
-  static const String _collectionName = 'animal_reports';
+  static const String _collectionName = 'reports';
+  static const String _bucketName = 'images'; // اسم الباكت في Supabase
 
-  /// رفع الصور إلى Firebase Storage وإرجاع روابطها
-  Future<List<String>> uploadImages(List<String> imagePaths) async {
-    List<String> imageUrls = [];
+  // رفع الصور إلى Supabase وإرجاع روابطها العامة
+  Future<List<String>> uploadImagesToSupabase(List<String> imagePaths) async {
+    List<String> urls = [];
 
     try {
-      for (int i = 0; i < imagePaths.length; i++) {
-        String fileName =
-            'reports/${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
-        File imageFile = File(imagePaths[i]);
+      for (var i = 0; i < imagePaths.length; i++) {
+        final file = File(imagePaths[i]);
 
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
         // رفع الصورة
-        TaskSnapshot snapshot = await _storage.ref(fileName).putFile(imageFile);
+        final response = await _supabase.storage
+            .from(_bucketName)
+            .upload(fileName, file);
 
-        // الحصول على رابط الصورة
-        String downloadUrl = await snapshot.ref.getDownloadURL();
-        imageUrls.add(downloadUrl);
+        // جلب رابط الصورة
+        final publicUrl = _supabase.storage
+            .from(_bucketName)
+            .getPublicUrl(fileName);
+
+        urls.add(publicUrl);
       }
     } catch (e) {
-      throw Exception('فشل رفع الصور: $e');
+      throw Exception("error in uploading  $e");
     }
 
-    return imageUrls;
+    return urls;
   }
 
-  /// حفظ التقرير في Firestore
-  /// هذه الدالة تستخدم فقط الوظائف التي يحتاجها الـ report screen
+  /// حفظ التقرير في Firestore مع روابط الصور من Supabase
   Future<String> submitReport(AnimalReport report) async {
     try {
-      // رفع الصور أولاً إذا كانت موجودة
+      // 1) رفع الصور لـ Supabase فقط
       List<String>? imageUrls;
       if (report.images != null && report.images!.isNotEmpty) {
-        imageUrls = await uploadImages(report.images!);
+        imageUrls = await uploadImagesToSupabase(report.images!);
       }
 
-      // إعداد بيانات التقرير
-      Map<String, dynamic> reportData = report.toMap();
+      // 2) تجهيز البيانات
+      Map<String, dynamic> data = report.toMap();
 
-      // استبدال مسارات الصور المحلية بروابط Firebase Storage
       if (imageUrls != null) {
-        reportData['images'] = imageUrls;
+        data['images'] = imageUrls;
       }
 
-      // إضافة timestamp من Firestore
-      reportData['createdAt'] = FieldValue.serverTimestamp();
-      reportData['updatedAt'] = FieldValue.serverTimestamp();
 
-      // حفظ التقرير في Firestore
+      // 3) تخزين في Firestore
       DocumentReference docRef = await _firestore
           .collection(_collectionName)
-          .add(reportData);
+          .add(data);
+
+      // 4) تأكد أن حقل 'id' داخل المستند يتوافق مع معرف المستند الذي أنشأه Firestore
+      // هذا يساعد عند القراءة على عدم وجود تناقض بين الحقل الداخلي ومعرف المستند
+      await docRef.update({'id': docRef.id});
 
       return docRef.id;
     } catch (e) {
-      throw Exception('$e');
+      throw Exception("$e");
     }
   }
-
 }

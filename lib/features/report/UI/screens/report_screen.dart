@@ -4,7 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 // removed localization import
 // import 'package:hopepaw/features/report/Data/firebase/l10n/app_localizations.dart';
 import 'package:hopepaw/features/report/Data/firebase/report_service.dart';
-import 'package:hopepaw/features/report/Data/models/post_model.dart';
+import 'package:hopepaw/features/report/Data/models/report_model.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -197,17 +197,36 @@ class _ReportScreenState extends State<ReportScreen> {
 
       // إرسال التقرير إلى Firebase
       String reportId = await _reportService.submitReport(report);
+      // Report ID returned by the service (kept in case needed for further
+      // processing later). We currently remain in the same bottom-nav tab and
+      // therefore do not navigate back.
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Report added successfully'),
+            content: Text('Report added successfully (id: $reportId)'),
             backgroundColor: Colors.green,
           ),
         );
 
-        // Return the report to the previous screen
-        Navigator.pop(context, report.copyWith(id: reportId));
+
+        setState(() {
+          _images = [];
+          animalStatus = "";
+          animalType = null;
+          selectedLocation = null;
+          _latController.clear();
+          _lngController.clear();
+          _nameController.clear();
+          _colorController.clear();
+          _ageController.clear();
+          _rewardController.clear();
+          _userNameController.clear();
+          _userEmailController.clear();
+          _descriptionController.clear();
+          _locationController.clear();
+          _lostDateController.clear();
+        });
       }
     } catch (e) {
       if (mounted) {

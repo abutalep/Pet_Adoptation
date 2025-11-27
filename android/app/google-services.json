@@ -12,7 +12,20 @@
           "package_name": "com.example.hopepaw"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1005990363308-b3cjpihsn31232m5i7hkd7d78h03lm19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hopepaw",
+            "certificate_hash": "f35d1ff97db43d3c031969e283a187abe31d5fa3"
+          }
+        },
+        {
+          "client_id": "1005990363308-5b2n1crsd9svmrbs33jfg2hik2he4519.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAf8mAj5QVZ82fDe-p3_IM9lLPvrvIAoFo"
@@ -20,7 +33,55 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005990363308-5b2n1crsd9svmrbs33jfg2hik2he4519.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1005990363308-3uq054ird5rdf0mvve6v4ig9a3tcimdr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rawadFinalProject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005990363308:android:9014cd224110cdd47ddf09",
+        "android_client_info": {
+          "package_name": "com.example.rawad_final_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005990363308-5b2n1crsd9svmrbs33jfg2hik2he4519.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf8mAj5QVZ82fDe-p3_IM9lLPvrvIAoFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005990363308-5b2n1crsd9svmrbs33jfg2hik2he4519.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1005990363308-3uq054ird5rdf0mvve6v4ig9a3tcimdr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rawadFinalProject"
+              }
+            }
+          ]
         }
       }
     }

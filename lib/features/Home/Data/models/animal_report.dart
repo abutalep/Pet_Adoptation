@@ -51,45 +51,39 @@ class AnimalReport {
       'color': color,
       'age': age,
       'reward': reward,
-      'username': userName,
-      'useremail': userEmail,
+      'userName': userName,
+      'userEmail': userEmail,
       'description': description,
       'location': location,
       'latitude': latitude,
       'longitude': longitude,
-      'lostdatetime': lostDateTime.toIso8601String(),
+      'lostDateTime': lostDateTime.toIso8601String(),
       'timestamp': timestamp,
       'images': images,
       'status': status,
     };
   }
 
-  factory AnimalReport.fromMap(Map<String, dynamic> json) {
+  factory AnimalReport.fromMap(Map<String, dynamic> map) {
     return AnimalReport(
-      id: json['id'] as String,
-      name: json['name'] as String?,
-      category: json['category'] as String,
-      color: json['color'] as String,
-      age: json['age'] as int?,
-      reward: json['reward'] != null
-          ? (json['reward'] as num).toDouble()
-          : null,
-      userName: json['username'] as String,
-      userEmail: json['useremail'] as String,
-      description: json['description'] as String,
-      location: json['location'] as String,
-      latitude: json['latitude'] != null
-          ? (json['latitude'] as num).toDouble()
-          : null,
-      longitude: json['longitude'] != null
-          ? (json['longitude'] as num).toDouble()
-          : null,
-      lostDateTime: (json['lostdatetime'] as Timestamp).toDate(),
-      timestamp: json['timestamp'] as int,
-      images: json['images'] != null
-          ? List<String>.from(json['images'] as List)
-          : null,
-      status: json['status'] as String,
+      id: map['id'] as String,
+      name: map['name'] as String?,
+      category: map['category'] as String,
+      color: map['color'] as String,
+      age: map['age'] != null ? (map['age'] as num).toInt() : null,
+      reward: map['reward'] != null ? (map['reward'] as num).toDouble() : null,
+      userName: map['userName'] as String,
+      userEmail: map['userEmail'] as String,
+      description: map['description'] as String,
+      location: map['location'] as String,
+      latitude: map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
+      longitude: map['longitude'] != null ? (map['longitude'] as num).toDouble() : null,
+      lostDateTime: map['lostDateTime'] is Timestamp
+          ? (map['lostDateTime'] as Timestamp).toDate()
+          : DateTime.parse(map['lostDateTime'] as String),
+      timestamp: map['timestamp'] as int,
+      images: map['images'] != null ? List<String>.from(map['images'] as List) : null,
+      status: map['status'] as String,
     );
   }
 

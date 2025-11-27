@@ -11,7 +11,7 @@ class ProfileCard extends StatelessWidget {
 
         leading: Icon(Icons.person, size: 50, color: Color(0xFF44174E)),
         title: Text("welcome to HopePaw", style: TextStyle(fontSize: 15)),
-        subtitle: Text(name, style: TextStyle(fontSize: 22)),
+        subtitle: Text(name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFF44174E)),
       ),
     );
