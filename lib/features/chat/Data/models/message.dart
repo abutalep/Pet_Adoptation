@@ -26,13 +26,16 @@ class Message {
   }
 
   factory Message.fromMap(Map<String, dynamic> map) {
-    return Message(
-      id: map['id'],
-      text: map['text'],
-      timestamp: map['timestamp']  as Timestamp,
-      senderId: map['senderId'],
-      receiverId: map['receiverId'],
-    );
-  }
+  return Message(
+    id: map['id'],
+    text: map['text'] ?? '',
+    timestamp: map['timestamp'] == null
+        ? Timestamp.now()
+        : map['timestamp'],
+    senderId: map['senderId'],
+    receiverId: map['receiverId'],
+  );
+}
+
 
 }
