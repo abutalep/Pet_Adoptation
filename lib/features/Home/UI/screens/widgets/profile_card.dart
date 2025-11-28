@@ -18,6 +18,7 @@ class ProfileCard extends StatelessWidget {
         child: ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
 
+
           leading: Icon(Icons.person, size: 50, color: Color(0xFF44174E)),
           title: Text("welcome to HopePaw", style: TextStyle(fontSize: 15)),
           subtitle: Text(name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
