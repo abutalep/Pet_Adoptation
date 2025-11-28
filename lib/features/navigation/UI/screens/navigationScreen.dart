@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hopepaw/features/Home/UI/screens/homescreen.dart';
+import 'package:hopepaw/features/chat/UI/screens/chats_list_%20screen.dart';
 import 'package:hopepaw/features/report/UI/screens/report_screen.dart';
 
 
@@ -21,7 +23,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     Center(child: Text("Search", style: TextStyle(fontSize: 22))),
     ReportScreen(),
     Center(child: Text("Adopt", style: TextStyle(fontSize: 22))),
-    Center(child: Text("Donation", style: TextStyle(fontSize: 22))),
+    ChatListScreen(),
   ];
 
   @override

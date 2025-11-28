@@ -60,8 +60,6 @@ class ReportService {
           .collection(_collectionName)
           .add(data);
 
-      // 4) تأكد أن حقل 'id' داخل المستند يتوافق مع معرف المستند الذي أنشأه Firestore
-      // هذا يساعد عند القراءة على عدم وجود تناقض بين الحقل الداخلي ومعرف المستند
       await docRef.update({'id': docRef.id});
 
       return docRef.id;
