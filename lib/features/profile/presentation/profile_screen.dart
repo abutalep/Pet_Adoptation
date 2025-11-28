@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hopepaw/features/lang/UI/screens/language_screen.dart';
+import 'package:hopepaw/features/profile/presentation/account_screen.dart';
 
 import '../../../../core/widgets/bottom_nav_bar.dart';
 import '../widgets/delete_account_bottom_sheet.dart';
@@ -42,7 +43,14 @@ class ProfileScreen extends StatelessWidget {
                   ProfileHeaderCard(
                     name: 'User',
                     email: 'name@example.com',
-                    onTap: () => context.go('/profile/account'),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                           AccountScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
                   ProfileMenuItem(
