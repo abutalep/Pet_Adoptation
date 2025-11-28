@@ -167,23 +167,24 @@ class AnimalDetailsScreen extends StatelessWidget {
                         child: const Icon(Icons.person, size: 28),
                       ),
                       const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            report.userName,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              report.userName,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            report.userEmail,
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
+                            Text(
+                              report.userEmail,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Spacer(),
                       IconButton(
                         icon: const Icon(
                           Icons.call_outlined,
