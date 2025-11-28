@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(width: 8),
                     FilterButton(
-                      category: "cats",
+                      category: "Cat",
                       selectedCategory: selectedCategory,
                       onSelected: (value) {
                         setState(() {
@@ -55,7 +55,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(width: 8),
                     FilterButton(
-                      category: "Dogs",
+                      category: "Dog",
+                      selectedCategory: selectedCategory,
+                      onSelected: (value) {
+                        setState(() {
+                          selectedCategory = value;
+                        });
+                      },
+                    ),
+                    SizedBox(width: 8),
+                    FilterButton(
+                      category: "Bird",
                       selectedCategory: selectedCategory,
                       onSelected: (value) {
                         setState(() {

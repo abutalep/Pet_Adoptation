@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'dart:typed_data';
 
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -34,23 +35,34 @@ class AuthService {
     }
   }
 
-  /// رفع الصورة الشخصية إلى Firebase Storage
-  Future<String?> uploadProfileImage(Uint8List imageBytes, String userId) async {
+  /// رفع الصورة الشخصية إلى Supabase Storage وإرجاع الرابط العام
+  Future<String?> uploadProfileImage(
+    Uint8List imageBytes,
+    String userId,
+  ) async {
+    const String bucketName = 'images';
     try {
-      final fileName = 'profile_images/$userId/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final ref = _storage.ref(fileName);
-      
-      final uploadTask = ref.putData(
-        imageBytes,
-        SettableMetadata(contentType: 'image/jpeg'),
-      );
-      
-      final snapshot = await uploadTask;
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-      
-      return downloadUrl;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'profile_images/$userId/$timestamp.jpg';
+
+      // Write to a temporary file then upload (Supabase accepts a File here)
+      final tmpFile = File('${Directory.systemTemp.path}/$timestamp.jpg');
+      await tmpFile.create(recursive: true);
+      await tmpFile.writeAsBytes(imageBytes);
+
+      // Upload to Supabase storage
+      await supabase.Supabase.instance.client.storage
+          .from(bucketName)
+          .upload(fileName, tmpFile);
+
+      // Get public URL
+      final publicUrl = supabase.Supabase.instance.client.storage
+          .from(bucketName)
+          .getPublicUrl(fileName);
+
+      return publicUrl;
     } catch (e) {
-      print('Error uploading profile image: $e');
+      print('Error uploading profile image to Supabase: $e');
       return null;
     }
   }
@@ -67,6 +79,9 @@ class AuthService {
   }) async {
     try {
       await _firestore.collection('users').doc(userId).set({
+        // Store the user id inside the document as well so the 'id' field is available
+        // when querying documents and mapping them to local models
+        'id': userId,
         'email': email.trim(),
         'firstName': firstName.trim(),
         'lastName': lastName.trim(),
@@ -87,13 +102,21 @@ class AuthService {
     try {
       final doc = await _firestore.collection('users').doc(userId).get();
       if (doc.exists) {
-        return doc.data();
+        // Always include the document id as 'id' in the returned map so clients
+        // always see the uid even if older documents were missing the field.
+        final data = doc.data() ?? {};
+        data['id'] = doc.id;
+        return data;
       }
       return null;
     } catch (e) {
       print('Error getting user data: $e');
       return null;
     }
+  }
+
+  static String getCurrentUserId() {
+    return FirebaseAuth.instance.currentUser!.uid;
   }
 
   /// تسجيل حساب جديد
@@ -103,10 +126,11 @@ class AuthService {
     String? displayName,
   }) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password,
+          );
 
       // تحديث اسم المستخدم إذا تم توفيره
       if (displayName != null && displayName.isNotEmpty) {
@@ -154,7 +178,7 @@ class AuthService {
     try {
       // تسجيل الدخول للتحقق من البريد
       await signInWithEmailAndPassword(email: email, password: password);
-      
+
       // التحقق من حالة التحقق من البريد
       final user = _auth.currentUser;
       if (user != null) {
@@ -178,7 +202,8 @@ class AuthService {
         return null;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -191,7 +216,6 @@ class AuthService {
       throw Exception('حدث خطأ أثناء تسجيل الدخول بـ Google: $e');
     }
   }
-
 
   /// تسجيل الخروج
   Future<void> signOut() async {
@@ -277,5 +301,3 @@ class AuthService {
     }
   }
 }
-
-
