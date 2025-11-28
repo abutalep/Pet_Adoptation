@@ -609,26 +609,24 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: 24),
 
                       // Do you have a pet?
-                      Row(
-                        children: [
-                          Text(
-                            lang.get('do_you_have_pet'),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey,
-                              fontFamily: 'sans-serif',
+                      FittedBox(
+                        child: Row(
+                          children: [
+                            Text(
+                              lang.get('do_you_have_pet'),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey,
+                                fontFamily: 'sans-serif',
+                              ),
                             ),
-                          ),
-                          const Spacer(),
-                          Row(
-                            children: [
-                              _buildPetButton(lang.get('yes'), true),
-                              const SizedBox(width: 12),
-                              _buildPetButton(lang.get('no'), false),
-                            ],
-                          ),
-                        ],
+                            SizedBox(width: 8,),
+                            _buildPetButton(lang.get('yes'), true),
+                            const SizedBox(width: 12),
+                            _buildPetButton(lang.get('no'), false),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 24),
@@ -728,12 +726,14 @@ class _SignupScreenState extends State<SignupScreen> {
             color: Colors.grey[600],
           ),
           const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontFamily: 'sans-serif',
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontFamily: 'sans-serif',
+              ),
             ),
           ),
         ],
