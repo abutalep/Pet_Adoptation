@@ -4,6 +4,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hopepaw/features/report_details/Data/firebase/details_service.dart';
+import 'package:hopepaw/features/Edit/UI/screens/edit_report_screen.dart';
+import 'package:hopepaw/features/chat/Data/firebase/chat_services.dart';
+import 'package:hopepaw/features/chat/UI/screens/chat_screen.dart';
 
 class AnimalDetailsScreen extends StatefulWidget {
   final AnimalReport report;
@@ -15,6 +18,7 @@ class AnimalDetailsScreen extends StatefulWidget {
 
 class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
   late final MapController _mapController;
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -48,7 +52,7 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                       ],
               ),
             ),
-            // Edit/Delete buttons (visible only to the report owner)
+
             Builder(
               builder: (context) {
                 final currentEmail = FirebaseAuth.instance.currentUser?.email;
@@ -61,65 +65,110 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                     vertical: 8.0,
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(
-                        tooltip: 'Edit',
-                        icon: const Icon(Icons.edit, color: Colors.grey),
-                        onPressed: () async {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Edit not implemented yet'),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _isDeleting
+                              ? null
+                              : () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (ctx) => EditReportScreen(report: report)),
+                                  );
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF44174E),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        tooltip: 'Delete',
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.red,
+                          ),
+                          child: const Text(
+                            'Edit',
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        onPressed: () async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Confirm Deletion'),
-                              content: const Text(
-                                'Are you sure you want to delete this report?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(ctx).pop(false),
-                                  child: const Text('Cancel'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () => Navigator.of(ctx).pop(true),
-                                  child: const Text('Delete'),
-                                ),
-                              ],
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _isDeleting
+                              ? null
+                              : () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Confirm Deletion'),
+                                      content: const Text(
+                                        'Are you sure you want to delete this report?',
+                                      ),
+                                      actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(ctx).pop(false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () => Navigator.of(ctx).pop(true),
+                                            child: const Text('Delete'),
+                                          ),
+                                      ],
+                                    ),);
+                                  if (confirmed != true) return;
+
+                                  setState(() => _isDeleting = true);
+                                  try {
+                                    await DetailsService.deleteReport(
+                                      report.id,
+                                    );
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Report deleted.'),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+                                    }
+                                  } catch (e) {
+                                    if (mounted)
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Failed to delete: $e'),
+                                        ),
+                                      );
+                                  } finally {
+                                    if (mounted)
+                                      setState(() => _isDeleting = false);
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF383C),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          );
-                          if (confirmed != true) return;
-
-                          try {
-                            await DetailsService.deleteReport(report.id);
-
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Report deleted.'),
+                          ),
+                          child: _isDeleting
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : const Text(
+                                  'Delete',
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                              );
-                              Navigator.of(context).pop();
-                            }
-                          } catch (e) {
-                            if (mounted)
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Failed to delete: $e')),
-                              );
-                          }
-                        },
+                        ),
                       ),
                     ],
                   ),
@@ -286,7 +335,36 @@ class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
                           Icons.message_outlined,
                           color: Color(0xFF44174E),
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          // Don't open chat with yourself
+                          final myEmail =
+                              FirebaseAuth.instance.currentUser?.email;
+                          if (myEmail != null && myEmail == report.userEmail) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('This is your report'),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final user = await ChatServices.getUserByEmail(
+                            report.userEmail,
+                          );
+                          if (user == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('User not found')),
+                            );
+                            return;
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) => ChatScreen(user: user),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

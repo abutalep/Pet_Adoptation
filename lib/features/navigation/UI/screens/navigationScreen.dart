@@ -20,10 +20,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   final List<Widget> screens = [
     HomeScreen(),
-    Center(child: Text("Search", style: TextStyle(fontSize: 22))),
     ReportScreen(),
     AdoptionScreen(),
     ChatListScreen(),
+    Center(child: Text("Search", style: TextStyle(fontSize: 22))),
   ];
 
   @override
@@ -60,15 +60,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               label: "Home",
               
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/search.svg',
-                width: 30,
-                height: 35,
-                color: currentIndex == 1 ? Color(0xFF44174E) : Colors.white
-              ),
-              label: "Search",
-            ),
+            
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'assets/icons/plus.svg',
@@ -89,12 +81,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/money.svg',
+                'assets/icons/ChatTeardropText.svg',
                 width: 30,
                 height: 35,
                 color: currentIndex == 4 ? Color(0xFF44174E) : Colors.white
               ),
-              label: "Donation",
+              label: "Chats",
+            ),
+            BottomNavigationBarItem(
+              icon:Icon(Icons.person_rounded),
+              label: "Search",
             ),
           ],
         ),

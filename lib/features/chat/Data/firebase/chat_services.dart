@@ -42,4 +42,14 @@ class ChatServices {
       return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
     });
   }
+
+  static Future<UserModel?> getUserByEmail(String email) async {
+    final query = await _db
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+    if (query.docs.isEmpty) return null;
+    return UserModel.fromMap(query.docs.first.data());
+  }
 }
