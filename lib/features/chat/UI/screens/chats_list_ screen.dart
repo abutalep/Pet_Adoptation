@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hopepaw/features/chat/Data/firebase/chat_services.dart';
 import 'package:hopepaw/features/chat/Data/models/app_user.dart';
@@ -17,40 +16,7 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   static const Color _darkPurple = Color(0xFF44174E);
   static const Color _purpleColor = Color(0xFF7B61FF);
-  Future<void> handleNotification() async {
-    final remotemessage = await FirebaseMessaging.instance.getInitialMessage();
 
-    if (remotemessage != null) {
-      handleMessage(remotemessage);
-    }
-
-    FirebaseMessaging.onMessageOpenedApp.listen((value) {
-      handleMessage(value);
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    handleNotification();
-  }
-
-  void handleMessage(RemoteMessage message) {
-    final notification = message.notification;
-    final userId = notification?.body;
-    final email = notification?.title;
-    if (userId != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatScreen(
-            user: UserModel(id: userId, email: email ?? ''),
-          ),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +25,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
         userProvider.userData?['displayName'] ??
         FirebaseAuth.instance.currentUser?.displayName ??
         "User";
+        
     return Scaffold(
       appBar: AppBar(
         backgroundColor: _darkPurple,
         title: Text(
-          "Chats - ${displayName}",
+          "Chats - $displayName",
           style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),

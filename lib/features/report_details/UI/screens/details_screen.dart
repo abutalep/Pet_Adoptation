@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:hopepaw/features/Home/Data/models/animal_report.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hopepaw/features/report_details/Data/firebase/details_service.dart';
 
-class AnimalDetailsScreen extends StatelessWidget {
+class AnimalDetailsScreen extends StatefulWidget {
   final AnimalReport report;
   const AnimalDetailsScreen({super.key, required this.report});
 
   @override
+  State<AnimalDetailsScreen> createState() => _AnimalDetailsScreenState();
+}
+
+class _AnimalDetailsScreenState extends State<AnimalDetailsScreen> {
+  late final MapController _mapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final report = widget.report;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(backgroundColor: Colors.transparent),
@@ -29,6 +47,84 @@ class AnimalDetailsScreen extends StatelessWidget {
                         ),
                       ],
               ),
+            ),
+            // Edit/Delete buttons (visible only to the report owner)
+            Builder(
+              builder: (context) {
+                final currentEmail = FirebaseAuth.instance.currentUser?.email;
+                final isOwner =
+                    currentEmail != null && currentEmail == report.userEmail;
+                if (!isOwner) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        tooltip: 'Edit',
+                        icon: const Icon(Icons.edit, color: Colors.grey),
+                        onPressed: () async {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Edit not implemented yet'),
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        tooltip: 'Delete',
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
+                        onPressed: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Confirm Deletion'),
+                              content: const Text(
+                                'Are you sure you want to delete this report?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(ctx).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => Navigator.of(ctx).pop(true),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed != true) return;
+
+                          try {
+                            await DetailsService.deleteReport(report.id);
+
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Report deleted.'),
+                                ),
+                              );
+                              Navigator.of(context).pop();
+                            }
+                          } catch (e) {
+                            if (mounted)
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to delete: $e')),
+                              );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
 
             Padding(
@@ -112,7 +208,7 @@ class AnimalDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         TextSpan(
-                          text: report.category ,
+                          text: report.category,
                           style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ],
@@ -184,13 +280,7 @@ class AnimalDetailsScreen extends StatelessWidget {
                         ],
                       ),
                       const Spacer(),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.call_outlined,
-                          color: Color(0xFF44174E),
-                        ),
-                        onPressed: () {},
-                      ),
+
                       IconButton(
                         icon: const Icon(
                           Icons.message_outlined,
@@ -240,6 +330,77 @@ class AnimalDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+
+                  const SizedBox(height: 20),
+
+                  // -------------------- Map Preview --------------------
+                  const Text(
+                    "Map",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF44174E),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+
+                  if (report.latitude != null && report.longitude != null)
+                    SizedBox(
+                      height: 220,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: FlutterMap(
+                          mapController: _mapController,
+                          options: MapOptions(
+                            initialCenter: LatLng(
+                              report.latitude!,
+                              report.longitude!,
+                            ),
+                            initialZoom: 13,
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+                              subdomains: ['a', 'b', 'c'],
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                Marker(
+                                  point: LatLng(
+                                    report.latitude!,
+                                    report.longitude!,
+                                  ),
+                                  width: 48,
+                                  height: 48,
+                                  child: const Icon(
+                                    Icons.location_pin,
+                                    color: Colors.red,
+                                    size: 36,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      height: 120,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade400),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Coordinates not available',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ),
+                    ),
 
                   const SizedBox(height: 30),
                 ],

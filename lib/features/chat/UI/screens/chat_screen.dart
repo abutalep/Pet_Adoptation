@@ -59,7 +59,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 return Center(child: Text('حدث خطأ: ${snapshot.error}'));
               }
               
-              
               final messages = snapshot.data;
               return Expanded(
                 child: ListView.builder(
