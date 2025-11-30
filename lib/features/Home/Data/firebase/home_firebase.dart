@@ -24,24 +24,26 @@ class HomeFirebase {
   //   return postsStream;
   // }
 
+  static Stream<List<AnimalReport>> getPostsByCategory({
+    String category = 'All',
+    String status = 'All',
+  }) {
+    final reportsCollection = _db.collection(reportsCollectionName);
+    Query reportsQuery = reportsCollection;
 
-  static Stream<List<AnimalReport>> getPostsByCategory(String category) {
-  final reportsCollection = _db.collection(reportsCollectionName);
+    if (category != 'All') {
+      reportsQuery = reportsQuery.where('category', isEqualTo: category);
+    }
+    if (status != 'All') {
+      reportsQuery = reportsQuery.where('status', isEqualTo: status);
+    }
 
-  if (category == "All") {
-    return reportsCollection.snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => AnimalReport.fromMap(doc.data())).toList());
+    return reportsQuery.snapshots().map(
+      (snapshot) => snapshot.docs
+          .map(
+            (doc) => AnimalReport.fromMap(doc.data() as Map<String, dynamic>),
+          )
+          .toList(),
+    );
   }
-
-  final filtered = reportsCollection
-      .where("category", isEqualTo: category)
-      .snapshots();
-
-  return filtered.map((snapshot) {
-    return snapshot.docs
-        .map((doc) => AnimalReport.fromMap(doc.data()))
-        .toList();
-  });
-}
-
 }

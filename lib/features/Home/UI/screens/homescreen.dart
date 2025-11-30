@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hopepaw/features/providers/user_provider.dart';
 import 'package:hopepaw/features/Home/Data/firebase/home_firebase.dart';
-import 'package:hopepaw/features/Home/UI/screens/widgets/filter_button.dart';
+import 'package:hopepaw/features/Home/UI/screens/widgets/filter_bar.dart';
 import 'package:hopepaw/features/Home/UI/screens/widgets/profile_card.dart';
 import 'package:hopepaw/features/Home/UI/screens/widgets/report_card.dart';
 
@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = "All";
+  String selectedStatus = "All";
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -28,67 +29,25 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ProfileCard(name: displayName),
               SizedBox(height: 8),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    FilterButton(
-                      category: "All",
-                      selectedCategory: selectedCategory,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      },
-                    ),
-                    SizedBox(width: 8),
-                    FilterButton(
-                      category: "Cat",
-                      selectedCategory: selectedCategory,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      },
-                    ),
-                    SizedBox(width: 8),
-                    FilterButton(
-                      category: "Dog",
-                      selectedCategory: selectedCategory,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      },
-                    ),
-                    SizedBox(width: 8),
-                    FilterButton(
-                      category: "Bird",
-                      selectedCategory: selectedCategory,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      },
-                    ),
-                    SizedBox(width: 8),
-                    FilterButton(
-                      category: "Others",
-                      selectedCategory: selectedCategory,
-                      onSelected: (value) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
-                      },
-                    ),
-                  ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: FilterBar(
+                  selectedCategory: selectedCategory,
+                  selectedStatus: selectedStatus,
+                  categories: const ['All', 'Cat', 'Dog', 'Bird', 'Others'],
+                  onCategoryChanged: (value) =>
+                      setState(() => selectedCategory = value),
+                  onStatusChanged: (value) =>
+                      setState(() => selectedStatus = value),
                 ),
               ),
               SizedBox(height: 8),
               StreamBuilder(
-                stream: HomeFirebase.getPostsByCategory(selectedCategory),
+                stream: HomeFirebase.getPostsByCategory(
+                  category: selectedCategory,
+                  status: selectedStatus,
+                ),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
